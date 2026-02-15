@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto" data-theme="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>基于Python的悬臂梁有限元分析 | FEM_Study</title>
+<meta name="keywords" content="Mechanics, Python, FEM">
+<meta name="description" content="一、常见数理方程的建立
+1.1 三类典型的方程
+
+双曲方程 (以波动方程为代表):$\frac{\partial^2 u}{\partial t^2}-a^2\nabla^2u=f(x,y,z,t)$
+抛物型方程 (热传导方程为代表):$\frac{\partial u}{\partial t}-a^2\nabla^2u=f(x,y,z,t)$
+椭圆型方程 (泊松方程为代表):$\nabla^2u=f(x,y,z,t)$
+
+1.2 波动微分方程的建立
+1.2.1 基本假设
+
+弦是理想的柔软的,即只可以承受拉力不可以承受压力
+弦是均匀的,即 $\rho$ 是常数
+微小振动原理:$\sin\theta \approx tan \theta$
+
+1.2.2 方程建立过程
+
+选取 $(x,x&#43;\Delta x)$ 微元,使用 $u(x,t)$ 表示在 t 时刻,x 位置的位移
+对微元竖直方向进行分析:$F_u=T_2sin\beta-T_2sin\alpha$
+在几何上,$tan \alpha=\frac{\partial u}{\partial x}\Big|_{x}$,$tan\beta=\frac{\partial u}{\partial x}\Big|_{x&#43;\Delta x}$
+垂直合力可以写成:$F_u=T(\frac{\partial u}{\partial x}(x&#43;\Delta x,t)-\frac{\partial u}{\partial x}(x,t))$
+微元质量为 $\Delta m=\rho \Delta x$
+微元的垂直加速度 $a=\frac{\partial^2u}{\partial t^2}$
+由 $F=ma$ 可以得到:$$T\left[\frac{\partial u}{\partial x}(x&#43;\Delta x,t)-\frac{\partial u}{\partial x}(x,t) \right]=\frac{\partial^2u}{\partial t^2}(\rho \Delta x)$$
+对左侧除以 $\Delta x$,当其向 0 逼近时,有 $$\lim_{ \Delta x \to 0 }\frac{T\left[ \frac{\partial u}{\partial x}(x&#43;\Delta x,t)-\frac{\partial u}{\partial x}(x,t) \right]}{\Delta x}=\frac{\partial^2u}{\partial x^2} $$
+进而,方程转变为:$$T\frac{\partial^2 u}{\partial x^2}=\rho\frac{\partial ^2 u}{\partial t^2}$$
+令 $a=\frac{\rho}{T}$,整理得到一元振动微分方程:$$\frac{\partial^2u}{\partial x ^2}=a^2\frac{\partial^2u}{\partial t^2}$$
+
+1.2.3 各类变体
+常见的对一维波动方程有影响的因素包括: 重力影响、阻尼、弹性支承、垂直悬挂等。">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/test/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.a29c24210eb31d9ce56f669c66a35c9c51b17376b7764e336a49af7dec914cf0.css" integrity="sha256-opwkIQ6zHZzlb2acZqNcnFGxc3a3dk4zakmvfeyRTPA=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/test/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+                color-scheme: dark;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .toc {
+                background: var(--entry);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            .list::-webkit-scrollbar-thumb {
+                border-color: var(--code-bg);
+            }
+        }
+
+    </style>
+</noscript>
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else if (localStorage.getItem("pref-theme") === "light") {
+       document.querySelector("html").dataset.theme = 'light';
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.querySelector("html").dataset.theme = 'dark';
+    } else {
+        document.querySelector("html").dataset.theme = 'light';
+    }
+
+</script>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+</head>
+<body id="top">
+    <header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="FEM_Study (Alt + H)">FEM_Study</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      基于Python的悬臂梁有限元分析
+    </h1>
+    <div class="post-meta"><span title='2026-01-20 00:00:00 +0000 UTC'>January 20, 2026</span>
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="一常见数理方程的建立">一、常见数理方程的建立<a hidden class="anchor" aria-hidden="true" href="#一常见数理方程的建立">#</a></h2>
+<h3 id="11-三类典型的方程">1.1 三类典型的方程<a hidden class="anchor" aria-hidden="true" href="#11-三类典型的方程">#</a></h3>
+<ul>
+<li>双曲方程 (以波动方程为代表):$\frac{\partial^2 u}{\partial t^2}-a^2\nabla^2u=f(x,y,z,t)$</li>
+<li>抛物型方程 (热传导方程为代表):$\frac{\partial u}{\partial t}-a^2\nabla^2u=f(x,y,z,t)$</li>
+<li>椭圆型方程 (泊松方程为代表):$\nabla^2u=f(x,y,z,t)$</li>
+</ul>
+<h3 id="12-波动微分方程的建立">1.2 波动微分方程的建立<a hidden class="anchor" aria-hidden="true" href="#12-波动微分方程的建立">#</a></h3>
+<h4 id="121-基本假设">1.2.1 基本假设<a hidden class="anchor" aria-hidden="true" href="#121-基本假设">#</a></h4>
+<ul>
+<li>弦是理想的柔软的,即只可以承受拉力不可以承受压力</li>
+<li>弦是均匀的,即 $\rho$ 是常数</li>
+<li>微小振动原理:$\sin\theta \approx tan \theta$</li>
+</ul>
+<h4 id="122-方程建立过程">1.2.2 方程建立过程<a hidden class="anchor" aria-hidden="true" href="#122-方程建立过程">#</a></h4>
+<ul>
+<li>选取 $(x,x+\Delta x)$ 微元,使用 $u(x,t)$ 表示在 t 时刻,x 位置的位移</li>
+<li>对微元竖直方向进行分析:$F_u=T_2sin\beta-T_2sin\alpha$</li>
+<li>在几何上,$tan \alpha=\frac{\partial u}{\partial x}\Big|_{x}$,$tan\beta=\frac{\partial u}{\partial x}\Big|_{x+\Delta x}$</li>
+<li>垂直合力可以写成:$F_u=T(\frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t))$</li>
+<li>微元质量为 $\Delta m=\rho \Delta x$</li>
+<li>微元的垂直加速度 $a=\frac{\partial^2u}{\partial t^2}$</li>
+<li>由 $F=ma$ 可以得到:$$T\left[\frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t) \right]=\frac{\partial^2u}{\partial t^2}(\rho \Delta x)$$</li>
+<li>对左侧除以 $\Delta x$,当其向 0 逼近时,有 $$\lim_{ \Delta x \to 0 }\frac{T\left[ \frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t) \right]}{\Delta x}=\frac{\partial^2u}{\partial x^2} $$</li>
+<li>进而,方程转变为:$$T\frac{\partial^2 u}{\partial x^2}=\rho\frac{\partial ^2 u}{\partial t^2}$$</li>
+<li>令 $a=\frac{\rho}{T}$,整理得到一元振动微分方程:$$\frac{\partial^2u}{\partial x ^2}=a^2\frac{\partial^2u}{\partial t^2}$$</li>
+</ul>
+<h4 id="123-各类变体">1.2.3 各类变体<a hidden class="anchor" aria-hidden="true" href="#123-各类变体">#</a></h4>
+<p>常见的对一维波动方程有影响的因素包括: 重力影响、阻尼、弹性支承、垂直悬挂等。</p>
+<ul>
+<li>受到重力影响时，需要引入重力项，即 $F_{u}=T[\tan \beta -\tan \alpha]-\rho \Delta x=\rho \Delta x\frac{\partial^2u}{\partial t^2}$</li>
+<li>收到阻尼影响时，引入一个和 $u_{t}$ 方向相反的变量 $F_{f}=-k\Delta x\frac{\partial u}{\partial t}$，对外力的描述进行修正</li>
+</ul>
+<h3 id="13-热传导微分方程的建立">1.3 热传导微分方程的建立<a hidden class="anchor" aria-hidden="true" href="#13-热传导微分方程的建立">#</a></h3>
+<h4 id="131-基本设定">1.3.1 基本设定<a hidden class="anchor" aria-hidden="true" href="#131-基本设定">#</a></h4>
+<ul>
+<li>
+<p>考虑一个各边长为 $\Delta x,\Delta y,\Delta z$,则在三个方向上存在温度差，满足 Fourier 热传导定律</p>
+</li>
+<li>
+<p>Fourier 热传导定律：$$
+\begin{aligned}
+q_x=-k \frac{\partial u}{\partial x} \
+q_{y}=-k\frac{\partial u}{\partial y} \
+q_{z}=-k \frac{\partial u}{\partial z} \
+q=-k \nabla u
+\end{aligned}</p>
+<p>$$</p>
+</li>
+</ul>
+<h4 id="132-方程的建立">1.3.2 方程的建立<a hidden class="anchor" aria-hidden="true" href="#132-方程的建立">#</a></h4>
+<ul>
+<li>
+<p>则在 $\Delta t$ 时间内沿着 $x$ 方向流入六面体的热量：
+$$</p>
+<p>\begin{gathered}
+\left[q_{x}\Big|<em>{x} - q</em>{x} \Big|<em>{x+\Delta x}\right] =\left[  k \frac{\partial u}{\partial x}</em>{x+\Delta x}-k  \frac{\partial u}{\partial x}<em>{x}  \right]\Delta x\Delta z\Delta t=k \frac{\partial^2 u}{\partial x^2}\Delta x\Delta y\Delta z\Delta t \
+\left[q</em>{y}\Big|<em>{y}-q</em>{y}\Big|<em>{y+\Delta y}\right] = k \frac{\partial^2 u}{\partial y^2}\Delta x\Delta y\Delta z\Delta t \
+\left[q</em>{z}\Big|<em>{z}-q</em>{z}\Big|_{z+\Delta z}\right]=k \frac{\partial^2u}{\partial z^2}\Delta x\Delta y\Delta z\Delta t</p>
+</li>
+</ul>
+<p>\end{gathered}</p>
+<p>$$</p>
+<ul>
+<li>在没有其他热量来源和热量消耗的情况下，净流入的热量应当等于介质在 $\Delta t$ 内升高对应温度所需要的热量：$$
+  k \left(\frac{\partial^2u}{\partial x^2}+ \frac{\partial^2u}{\partial y^2}+ \frac{\partial^2u}{\partial z^2}\right)\Delta x\Delta y\Delta z\Delta t=\rho \Delta x\Delta y\Delta z\cdot c \cdot \Delta u
+$$</li>
+<li>整理后得到:$$
+  \frac{\partial u}{\partial t}-\frac{k}{\rho c} \nabla ^2u =0
+  $$</li>
+</ul>
+<h4 id="133-方程的变体">1.3.3 方程的变体<a hidden class="anchor" aria-hidden="true" href="#133-方程的变体">#</a></h4>
+<ul>
+<li>
+<p>当介质不均匀时，即 k 与 $(x,y,z)$ 相关，热传导方程变为：</p>
+$$
+  \rho c \frac{\partial u}{\partial t}-\nabla(k\nabla u)=F(x,y,z,t)
+  $$</li>
+<li>
+<p>对含有热源的方程的推导：</p>
+<p>那么，在 $\Delta t$ 时间内，体积元 $\Delta x \Delta y \Delta z$ 内部<strong>产生</strong>的热量为：
+</p>
+$$ Q_{source} = F \cdot \Delta x \Delta y \Delta z \cdot \Delta t $$<p><strong>新的能量守恒逻辑为：</strong>
+</p>
+$$ (\text{净流入的热量}) + (\text{内部产生的热量}) = (\text{介质升温所需的内能增量}) $$<p><strong>对应的数学表达式为：</strong></p>
+$$ \underbrace{k \left( \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} + \frac{\partial^2 u}{\partial z^2} \right) \Delta x \Delta y \Delta z \Delta t}_{\text{净流入的热量}} + \underbrace{F \cdot \Delta x \Delta y \Delta z \cdot \Delta t}_{\text{内部产生的热量}} = \underbrace{\rho \Delta x \Delta y \Delta z \cdot c \cdot \Delta u}_{\text{内能增量}} $$<p>两边同时除以 $\Delta x \Delta y \Delta z \cdot \Delta t$：</p>
+$$ k \nabla^2 u + F = \rho c \frac{\Delta u}{\Delta t} $$<p>当 $\Delta t \to 0$ 时，$\frac{\Delta u}{\Delta t}$ 变为 $\frac{\partial u}{\partial t}$：</p>
+$$ k \nabla^2 u + F = \rho c \frac{\partial u}{\partial t} $$<p>非齐次热传导方程形式：
+</p>
+$$ \frac{\partial u}{\partial t} = a^2 \nabla^2 u + f $$</li>
+</ul>
+<h2 id="二定解问题">二、定解问题<a hidden class="anchor" aria-hidden="true" href="#二定解问题">#</a></h2>
+<ul>
+<li><strong>边界条件</strong>和<strong>初始条件</strong>统称为<em>定解条件</em>，方程附加上定解条件构成定解问题</li>
+</ul>
+<h3 id="21-初始条件与边界条件的提出">2.1 初始条件与边界条件的提出<a hidden class="anchor" aria-hidden="true" href="#21-初始条件与边界条件的提出">#</a></h3>
+<h4 id="步骤-1构建几何与时间框架-setup">步骤 1：构建几何与时间框架 (Setup)<a hidden class="anchor" aria-hidden="true" href="#步骤-1构建几何与时间框架-setup">#</a></h4>
+<p>在确定条件之前，必须先明确“舞台”在哪里。</p>
+<ul>
+<li><strong>画草图</strong>：画出物理对象的几何形状（杆、膜、体）。</li>
+<li><strong>建坐标</strong>：确定原点、正方向、定义域范围（如 $0 \leq x \leq L$）。</li>
+<li><strong>定变量</strong>：明确未知函数 $u(x,t)$ 代表什么物理量（温度、位移、电势等）。</li>
+</ul>
+<h4 id="步骤-2确定初始条件-initial-conditions---">步骤 2：确定初始条件 (Initial Conditions - $t=0$)<a hidden class="anchor" aria-hidden="true" href="#步骤-2确定初始条件-initial-conditions---">#</a></h4>
+<p><strong>核心逻辑</strong>：描述过程开始那一瞬间的状态。</p>
+<ul>
+<li><strong>判别阶数</strong>：
+<ul>
+<li>如果是<strong>热传导/扩散方程</strong>（对时间 $t$ 是一阶导数），只需要<strong>1 个</strong>初始条件（初始分布）。</li>
+<li>如果是<strong>波动方程</strong>（对时间 $t$ 是二阶导数），需要<strong>2 个</strong>初始条件（初始位置 + 初始速度）。</li>
+</ul>
+</li>
+<li><strong>操作提问</strong>：
+<ol>
+<li>$t=0$ 时，物体各处的 $u$ 值是多少？ $\rightarrow u|_{t=0} = \varphi(x)$</li>
+<li>$t=0$ 时，物体各处的变化率（速度）是多少？ $\rightarrow \frac{\partial u}{\partial t}|_{t=0} = \psi(x)$</li>
+</ol>
+</li>
+</ul>
+<h4 id="步骤-3确定边界条件-boundary-conditions---space-limits">步骤 3：确定边界条件 (Boundary Conditions - Space Limits)<a hidden class="anchor" aria-hidden="true" href="#步骤-3确定边界条件-boundary-conditions---space-limits">#</a></h4>
+<p><strong>核心逻辑</strong>：描述物体边界与外界环境的相互作用。</p>
+<ul>
+<li><strong>定位边界</strong>：找出几何区域的边缘（如 $x=0$ 和 $x=L$）。</li>
+<li><strong>分类对号入座</strong>：
+<ul>
+<li><strong>第一类（Dirichlet）</strong>：直接控制边界上的<strong>值</strong>（如固定温度、固定位移）。</li>
+<li><strong>第二类（Neumann）</strong>：控制边界上的<strong>通量/梯度</strong>（如绝热、受力、流速）。</li>
+<li><strong>第三类（Robin）</strong>：值与梯度的<strong>线性组合</strong>（如牛顿冷却定律、弹性支撑）。</li>
+</ul>
+</li>
+</ul>
+<h4 id="步骤-4一致性与适定性检查-check">步骤 4：一致性与适定性检查 (Check)<a hidden class="anchor" aria-hidden="true" href="#步骤-4一致性与适定性检查-check">#</a></h4>
+<ul>
+<li><strong>相容性</strong>：检查初始条件在边界处的值是否与边界条件冲突（例如：$t=0$ 时端点温度是否符合边界设定的温度）。</li>
+</ul>
+<hr>
+<p>翻译”对照表 (核心工具)</p>
+<p>这是操作中最实用的部分，通过物理描述直接映射到数学表达式。</p>
+<h4 id="1-初始条件映射-">1. 初始条件映射 ($t=0$)<a hidden class="anchor" aria-hidden="true" href="#1-初始条件映射-">#</a></h4>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">物理描述</th>
+          <th style="text-align: left">数学表达式</th>
+          <th style="text-align: left">适用方程</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><strong>初始温度分布</strong>为 $f(x)$</td>
+          <td style="text-align: left">$u(x,0) = f(x)$</td>
+          <td style="text-align: left">热传导/波动</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>初始形状/位移</strong>为 $f(x)$</td>
+          <td style="text-align: left">$u(x,0) = f(x)$</td>
+          <td style="text-align: left">波动</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>静止开始</strong> (Starting from rest)</td>
+          <td style="text-align: left">$u_t(x,0) = 0$</td>
+          <td style="text-align: left">波动</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>初始给予速度</strong> $g(x)$</td>
+          <td style="text-align: left">$u_t(x,0) = g(x)$</td>
+          <td style="text-align: left">波动</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>受冲击/敲击</strong> (Impulse)</td>
+          <td style="text-align: left">$u_t(x,0) = A\delta(x-x_0)$ (狄拉克函数)</td>
+          <td style="text-align: left">波动</td>
+      </tr>
+  </tbody>
+</table>
+<h4 id="2-边界条件映射--或-">2. 边界条件映射 ($x=0$ 或 $x=L$)<a hidden class="anchor" aria-hidden="true" href="#2-边界条件映射--或-">#</a></h4>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">边界类型</th>
+          <th style="text-align: left">物理场景 (热学)</th>
+          <th style="text-align: left">物理场景 (力学/波动)</th>
+          <th style="text-align: left">数学表达式 (设边界在 $x_0$)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><strong>第一类 (固定值)</strong></td>
+          <td style="text-align: left">恒温、保持在 $T_0$ 度</td>
+          <td style="text-align: left">端点固定、铰支</td>
+          <td style="text-align: left">$u(x_0, t) = \text{Constant}$</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>第二类 (导数)</strong></td>
+          <td style="text-align: left"><strong>绝热</strong> (Insulated)、热流为 0</td>
+          <td style="text-align: left"><strong>自由端</strong> (Free end)、无张力</td>
+          <td style="text-align: left">$\frac{\partial u}{\partial n} = 0$ (法向导数为 0)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>第二类 (非零通量)</strong></td>
+          <td style="text-align: left">注入恒定热流 $q$</td>
+          <td style="text-align: left">端点受已知外力 $F(t)$</td>
+          <td style="text-align: left">$K\frac{\partial u}{\partial x} = q$ 或 $T\frac{\partial u}{\partial x} = F$</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><strong>第三类 (混合)</strong></td>
+          <td style="text-align: left">表面散热 (牛顿冷却定律)</td>
+          <td style="text-align: left">弹性支撑 (弹簧连接)</td>
+          <td style="text-align: left">$\frac{\partial u}{\partial n} + h(u - u_{env}) = 0$</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="3-达朗贝尔公式与行波法求解一维波动方程">3 达朗贝尔公式与行波法求解一维波动方程<a hidden class="anchor" aria-hidden="true" href="#3-达朗贝尔公式与行波法求解一维波动方程">#</a></h2>
+<h3 id="31-公式适用场景与数学模型">3.1 公式适用场景与数学模型<a hidden class="anchor" aria-hidden="true" href="#31-公式适用场景与数学模型">#</a></h3>
+<ul>
+<li>达朗贝尔公式用于求解<strong>一维、无界弦的自由振动问题</strong>，方程标准形式为：$$
+  \begin{cases}
+  \frac{\partial^2u}{\partial t^2}=a^2 \frac{\partial^2u}{\partial x^2} & (-\infty < x<+ \infty,t>0 )  \\
+  u(x,y)=f(x)  &  \text{初始位移} \\
+  \frac{\partial u}{\partial t}(x,0)=g(x)  &  \text{初始速度} 
+  \end{cases}
+  $$</li>
+</ul>
+<h3 id="32-行波法主要思想">3.2 行波法主要思想<a hidden class="anchor" aria-hidden="true" href="#32-行波法主要思想">#</a></h3>
+<ul>
+<li>通过变量代换的方式，将波动方程改写成两部分函数的相加：$$
+  u(x,t)=F(x-at)+G(x+at)
+  $$</li>
+<li>在这其中，F 表示向右传播的波，G 表示向左传播的波</li>
+</ul>
+<h3 id="33-达朗贝尔公式">3.3 达朗贝尔公式<a hidden class="anchor" aria-hidden="true" href="#33-达朗贝尔公式">#</a></h3>
+<ul>
+<li>达朗贝尔公式的主要形式如下：$$
+  u(x,t)=\frac{1}{2} \left[ f(x-at)+f(x+at)\right]+ \frac{1}{2a} \int_{x-at}^{x+at}g(\tau)d\tau
+  $$</li>
+<li>公式各部分理解，前半部分表示位移贡献项，后半部分表示速度贡献项</li>
+</ul>
+<h3 id="34-达朗贝尔公式解题步骤">3.4 达朗贝尔公式解题步骤<a hidden class="anchor" aria-hidden="true" href="#34-达朗贝尔公式解题步骤">#</a></h3>
+<ul>
+<li>求解以下定解问题： $$ \begin{cases} u_{tt} = 4 u_{xx} & (-\infty < x < +\infty, t > 0) \\ u(x, 0) = \sin x \\ u_t(x, 0) = \cos x \end{cases} $$ <strong>解答过程：</strong></li>
+<li></li>
+</ul>
+<ol>
+<li><strong>识别参数</strong>： * 对比标准方程 $u_{tt} = a^2 u_{xx}$，可知 $a^2 = 4$，即 <strong>$a = 2$</strong>。 * 初始位移 <strong>$f(x) = \sin x$</strong>。 * 初始速度 <strong>$g(x) = \cos x$</strong>。 2. <strong>代入公式</strong>： $$ u(x, t) = \frac{1}{2}[\sin(x - 2t) + \sin(x + 2t)] + \frac{1}{2 \times 2} \int_{x - 2t}^{x + 2t} \cos \tau \, d\tau $$</li>
+<li><strong>分步计算</strong>：</li>
+</ol>
+<ul>
+<li><strong>第一部分（位移项）</strong>： 利用积化和差公式 $\sin A + \sin B = 2 \sin \frac{A+B}{2} \cos \frac{A-B}{2}$： $$ \frac{1}{2}[\sin(x - 2t) + \sin(x + 2t)] = \frac{1}{2} \cdot [2 \sin(x) \cos(2t)] = \sin(x)\cos(2t) $$</li>
+<li><strong>第二部分（速度项）</strong>： $$ \begin{aligned} \frac{1}{4} \int_{x - 2t}^{x + 2t} \cos \tau \, d\tau &= \frac{1}{4} [\sin \tau]_{x - 2t}^{x + 2t} \\ &= \frac{1}{4} [\sin(x + 2t) - \sin(x - 2t)] \end{aligned} $$ 利用积化和差公式 $\sin A - \sin B = 2 \cos \frac{A+B}{2} \sin \frac{A-B}{2}$： $$ \sin(x + 2t) - \sin(x - 2t) = 2 \cos(x) \sin(2t) $$ 所以第二部分为： $$ \frac{1}{4} [2 \cos(x) \sin(2t)] = \frac{1}{2} \cos(x) \sin(2t) $$</li>
+</ul>
+<ol>
+<li><strong>合并结果</strong>： $$ u(x, t) = \sin(x)\cos(2t) + \frac{1}{2} \cos(x) \sin(2t) $$   <strong>答案：</strong> $u(x, t) = \sin x \cos 2t + \frac{1}{2} \cos x \sin 2t$</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://localhost:1313/tags/mechanics/">Mechanics</a></li>
+      <li><a href="http://localhost:1313/tags/python/">Python</a></li>
+      <li><a href="http://localhost:1313/tags/fem/">FEM</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2026 <a href="http://localhost:1313/">FEM_Study</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu');
+    if (menu) {
+        
+        const scrollPosition = localStorage.getItem("menu-scroll-position");
+        if (scrollPosition) {
+            menu.scrollLeft = parseInt(scrollPosition, 10);
+        }
+        
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        const html = document.querySelector("html");
+        if (html.dataset.theme === "dark") {
+            html.dataset.theme = 'light';
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            html.dataset.theme = 'dark';
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

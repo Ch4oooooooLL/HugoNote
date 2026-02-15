@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Mechanics on FEM_Study</title>
+    <link>http://localhost:1313/tags/mechanics/</link>
+    <description>Recent content in Mechanics on FEM_Study</description>
+    <generator>Hugo -- 0.155.2</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Tue, 20 Jan 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/mechanics/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>基于Python的悬臂梁有限元分析</title>
+      <link>http://localhost:1313/posts/test/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/test/</guid>
+      <description>&lt;h2 id=&#34;一常见数理方程的建立&#34;&gt;一、常见数理方程的建立&lt;/h2&gt;
+&lt;h3 id=&#34;11-三类典型的方程&#34;&gt;1.1 三类典型的方程&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;双曲方程 (以波动方程为代表):$\frac{\partial^2 u}{\partial t^2}-a^2\nabla^2u=f(x,y,z,t)$&lt;/li&gt;
+&lt;li&gt;抛物型方程 (热传导方程为代表):$\frac{\partial u}{\partial t}-a^2\nabla^2u=f(x,y,z,t)$&lt;/li&gt;
+&lt;li&gt;椭圆型方程 (泊松方程为代表):$\nabla^2u=f(x,y,z,t)$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;12-波动微分方程的建立&#34;&gt;1.2 波动微分方程的建立&lt;/h3&gt;
+&lt;h4 id=&#34;121-基本假设&#34;&gt;1.2.1 基本假设&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;弦是理想的柔软的,即只可以承受拉力不可以承受压力&lt;/li&gt;
+&lt;li&gt;弦是均匀的,即 $\rho$ 是常数&lt;/li&gt;
+&lt;li&gt;微小振动原理:$\sin\theta \approx tan \theta$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;122-方程建立过程&#34;&gt;1.2.2 方程建立过程&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;选取 $(x,x+\Delta x)$ 微元,使用 $u(x,t)$ 表示在 t 时刻,x 位置的位移&lt;/li&gt;
+&lt;li&gt;对微元竖直方向进行分析:$F_u=T_2sin\beta-T_2sin\alpha$&lt;/li&gt;
+&lt;li&gt;在几何上,$tan \alpha=\frac{\partial u}{\partial x}\Big|_{x}$,$tan\beta=\frac{\partial u}{\partial x}\Big|_{x+\Delta x}$&lt;/li&gt;
+&lt;li&gt;垂直合力可以写成:$F_u=T(\frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t))$&lt;/li&gt;
+&lt;li&gt;微元质量为 $\Delta m=\rho \Delta x$&lt;/li&gt;
+&lt;li&gt;微元的垂直加速度 $a=\frac{\partial^2u}{\partial t^2}$&lt;/li&gt;
+&lt;li&gt;由 $F=ma$ 可以得到:$$T\left[\frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t) \right]=\frac{\partial^2u}{\partial t^2}(\rho \Delta x)$$&lt;/li&gt;
+&lt;li&gt;对左侧除以 $\Delta x$,当其向 0 逼近时,有 $$\lim_{ \Delta x \to 0 }\frac{T\left[ \frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t) \right]}{\Delta x}=\frac{\partial^2u}{\partial x^2} $$&lt;/li&gt;
+&lt;li&gt;进而,方程转变为:$$T\frac{\partial^2 u}{\partial x^2}=\rho\frac{\partial ^2 u}{\partial t^2}$$&lt;/li&gt;
+&lt;li&gt;令 $a=\frac{\rho}{T}$,整理得到一元振动微分方程:$$\frac{\partial^2u}{\partial x ^2}=a^2\frac{\partial^2u}{\partial t^2}$$&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;123-各类变体&#34;&gt;1.2.3 各类变体&lt;/h4&gt;
+&lt;p&gt;常见的对一维波动方程有影响的因素包括: 重力影响、阻尼、弹性支承、垂直悬挂等。&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
