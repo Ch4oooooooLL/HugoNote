@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "posts/材力基本公式.md",
+                "file": "posts/Test1/材力基本公式.md",
                 "mode": "source",
                 "source": false
               },
@@ -191,10 +191,12 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "8bf230de55235ab8",
+  "active": "c40c9ab801ce072f",
   "lastOpenFiles": [
-    "posts/Test.md",
-    "posts/材力基本公式.md",
+    "posts/Test2",
+    "posts/Test1",
+    "posts/Test2/Test.md",
+    "posts/Test1/材力基本公式.md",
     "posts/first-post.md",
     "Test.md",
     "posts",
