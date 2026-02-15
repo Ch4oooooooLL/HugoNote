@@ -2,6 +2,7 @@ baseURL = 'https://example.org/'
 languageCode = 'zh-cn'
 title = 'Chaos Blog'
 theme = 'PaperMod'
+sectionPagesMenu = "main"
 
 [params]
   math = true
