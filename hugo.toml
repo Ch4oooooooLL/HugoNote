@@ -6,6 +6,7 @@ theme = 'PaperMod'
 [params]
   math = true
   defaultTheme = "auto"
+  disableSpecial1stPost = true
 
 # 下面是为你定制的 Markdown 和公式渲染保护规则
 [markup]
