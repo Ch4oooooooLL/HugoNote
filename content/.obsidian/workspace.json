@@ -8,17 +8,13 @@
         "type": "tabs",
         "children": [
           {
-            "id": "8bf230de55235ab8",
+            "id": "740952bef2d3418a",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "1D有限元Python程序复建与注解.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "1D有限元Python程序复建与注解"
+              "title": "新标签页"
             }
           }
         ]
@@ -177,7 +173,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -191,8 +188,14 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "c40c9ab801ce072f",
+  "active": "740952bef2d3418a",
   "lastOpenFiles": [
+    "archive.md",
+    "新建 文本文档.txt",
+    "search.md",
+    "虚位移原理在有限元中的应用.md",
+    "posts/虚位移原理在有限元中的应用.md",
+    "posts/1D有限元Python程序复建与注解.md",
     "1D有限元Python程序复建与注解.md",
     "posts/Test1/材力基本公式.md",
     "posts/Test2",

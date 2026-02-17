@@ -2,7 +2,9 @@ baseURL = 'https://example.org/'
 languageCode = 'zh-cn'
 title = 'Chaos Blog'
 theme = 'PaperMod'
-sectionPagesMenu = "main"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"] # JSON 是开启搜索的关键
 
 [params]
   math = true
@@ -20,3 +22,27 @@ sectionPagesMenu = "main"
         [markup.goldmark.extensions.passthrough.delimiters]
           block = [['\[', '\]'], ['$$', '$$']]
           inline = [['\(', '\)'], ['$', '$']]
+[menu]
+  [[menu.main]]
+    identifier = "search"
+    name = "🔍 搜索"
+    url = "/search/"
+    weight = 10
+
+  [[menu.main]]
+    identifier = "archive"
+    name = "🗄️ 归档"
+    url = "/archive/"
+    weight = 20
+
+  [[menu.main]]
+    identifier = "categories"
+    name = "🗂️ 分类"
+    url = "/categories/"
+    weight = 30
+
+  [[menu.main]]
+    identifier = "tags"
+    name = "🏷️ 标签"
+    url = "/tags/"
+    weight = 40
