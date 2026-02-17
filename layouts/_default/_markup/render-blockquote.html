@@ -1,0 +1,38 @@
+{{ $text := .Text }}
+{{ $regex := `(?s)^<p>\[!([a-zA-Z0-9\-_]+)\][\+\-]?(.*?)(<br>|</p>)(.*)$` }}
+
+{{ if findRE $regex $text }}
+  {{ $matches := findRESubmatch $regex $text 1 }}
+  {{ $match := index $matches 0 }}
+  {{ $type := lower (index $match 1) }}
+  {{ $title := trim (index $match 2) " \n" }}
+  {{ if eq $title "" }}{{ $title = title $type }}{{ end }}
+  
+  {{ $icon := "📌" }}
+  {{ if eq $type "info" }}{{ $icon = "ℹ️" }}{{ end }}
+  {{ if eq $type "note" }}{{ $icon = "📝" }}{{ end }}
+  {{ if eq $type "warning" }}{{ $icon = "⚠️" }}{{ end }}
+  {{ if eq $type "danger" }}{{ $icon = "🚨" }}{{ end }}
+  {{ if eq $type "success" }}{{ $icon = "✅" }}{{ end }}
+  {{ if eq $type "tip" }}{{ $icon = "💡" }}{{ end }}
+  {{ if eq $type "question" }}{{ $icon = "❓" }}{{ end }}
+  {{ if eq $type "bug" }}{{ $icon = "🐛" }}{{ end }}
+
+  {{ $tag := index $match 3 }}
+  {{ $rest := index $match 4 }}
+  
+  <div class="obsidian-callout callout-{{ $type }}">
+    <div class="callout-title">
+      <div class="callout-icon">{{ $icon }}</div>
+      <div class="callout-title-text">{{ $title | safeHTML }}</div>
+    </div>
+    <div class="callout-content">
+      {{ if eq $tag "<br>" }}<p>{{ end }}
+      {{ $rest | safeHTML }}
+    </div>
+  </div>
+{{ else }}
+  <blockquote>
+    {{ $text | safeHTML }}
+  </blockquote>
+{{ end }}

@@ -5,9 +5,6 @@ date modified: 星期二, 二月 17日 2026, 6:22:06 晚上
 tags: [FEM, Python, NumericalAnalysis, Structure, Review]
 ---
 
-# FEM 复习：1D 变截面杆件分析 (Python 实现)
-
-**Tags**: #FEM #Python #NumericalAnalysis #Structure #Review
 
 ## 1. 问题定义与物理模型
 
@@ -27,10 +24,8 @@ $$
 k_e = \frac{EA_{avg}}{L_e} \begin{bmatrix} 1 & -1 \\ -1 & 1 \end{bmatrix}
 $$
 其中 $A_{avg}$ 取单元中心处的截面面积近似。
-> [!info]  **局部刚度矩阵的组装**
-> * 
 
-> 
+
 
 ## 2. 代码实现架构
 

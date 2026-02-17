@@ -1,0 +1,47 @@
+/* 基础卡片样式，无缝适配 PaperMod 的暗黑/明亮模式 */
+.obsidian-callout {
+  margin: 1.5em 0;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  background-color: var(--tertiary); 
+  border-left: 5px solid #448aff; /* 默认左侧边框颜色 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+}
+
+.obsidian-callout .callout-title {
+  display: flex;
+  align-items: flex-start;
+  font-weight: 600;
+  font-size: 1.05em;
+  margin-bottom: 0.5rem;
+  color: var(--primary);
+}
+
+.obsidian-callout .callout-icon {
+  margin-right: 0.5rem;
+  line-height: 1.4;
+}
+
+.obsidian-callout .callout-content {
+  margin-top: 0;
+  color: var(--secondary);
+  font-size: 0.95em;
+}
+
+.obsidian-callout .callout-content p {
+  margin-bottom: 0.5rem;
+}
+
+.obsidian-callout .callout-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* 针对 Obsidian 常用类型的颜色定制 */
+.callout-info { border-left-color: #00b0ff; }
+.callout-note { border-left-color: #673ab7; }
+.callout-warning { border-left-color: #ff9100; }
+.callout-danger { border-left-color: #ff1744; }
+.callout-success { border-left-color: #00e676; }
+.callout-tip { border-left-color: #00bfa5; }
+.callout-question { border-left-color: #ffc400; }
+.callout-bug { border-left-color: #f50057; }
