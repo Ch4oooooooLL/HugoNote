@@ -53,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "tag:#Review",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -74,8 +74,7 @@
               "title": "书签"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "horizontal",
@@ -178,8 +177,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -193,7 +191,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "2efc396557a2e05d",
+  "active": "c40c9ab801ce072f",
   "lastOpenFiles": [
     "1D有限元Python程序复建与注解.md",
     "posts/Test1/材力基本公式.md",
