@@ -11,10 +11,14 @@
             "id": "8bf230de55235ab8",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "1D有限元Python程序复建与注解.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新标签页"
+              "title": "1D有限元Python程序复建与注解"
             }
           }
         ]
@@ -49,7 +53,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#Review",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -70,7 +74,8 @@
               "title": "书签"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "horizontal",
@@ -173,7 +178,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -187,8 +193,9 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "882756a4099740de",
+  "active": "2efc396557a2e05d",
   "lastOpenFiles": [
+    "1D有限元Python程序复建与注解.md",
     "posts/Test1/材力基本公式.md",
     "posts/Test2",
     "posts/Test1",
