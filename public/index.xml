@@ -1,47 +1,96 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
-  <channel>
-    <title>FEM_Study</title>
-    <link>http://localhost:1313/</link>
-    <description>Recent content on FEM_Study</description>
-    <generator>Hugo -- 0.155.2</generator>
-    <language>zh-cn</language>
-    <lastBuildDate>Tue, 20 Jan 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>基于Python的悬臂梁有限元分析</title>
-      <link>http://localhost:1313/posts/test/</link>
-      <pubDate>Tue, 20 Jan 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/test/</guid>
-      <description>&lt;h2 id=&#34;一常见数理方程的建立&#34;&gt;一、常见数理方程的建立&lt;/h2&gt;
-&lt;h3 id=&#34;11-三类典型的方程&#34;&gt;1.1 三类典型的方程&lt;/h3&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>Chaos Blog</title><link>https://example.org/</link><description>Recent content on Chaos Blog</description><generator>Hugo -- 0.155.2</generator><language>zh-cn</language><atom:link href="https://example.org/index.xml" rel="self" type="application/rss+xml"/><item><title>FEM 复习：1D 变截面杆件分析 (Python 实现)</title><link>https://example.org/posts/1d%E6%9C%89%E9%99%90%E5%85%83python%E7%A8%8B%E5%BA%8F%E5%A4%8D%E5%BB%BA%E4%B8%8E%E6%B3%A8%E8%A7%A3/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://example.org/posts/1d%E6%9C%89%E9%99%90%E5%85%83python%E7%A8%8B%E5%BA%8F%E5%A4%8D%E5%BB%BA%E4%B8%8E%E6%B3%A8%E8%A7%A3/</guid><description>&lt;h2 id="1-问题定义与物理模型"&gt;1. 问题定义与物理模型&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;目标&lt;/strong&gt;：求解一根长度为 $L$、弹性模量为 $E$、横截面积 $A(x)$ 随位置变化的杆件，在右端受到拉力 $P$ 作用下的位移场 $u(x)$。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;控制方程 (Strong Form)&lt;/strong&gt;：
+&lt;/p&gt;
+$$
+\frac{d}{dx}\left( E A(x) \frac{du}{dx} \right) = 0, \quad x \in [0, L]
+$$&lt;p&gt;
+&lt;strong&gt;边界条件&lt;/strong&gt;：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Dirichlet (本质边界): $u(0) = 0$ (左端固定)&lt;/li&gt;
+&lt;li&gt;Neumann (自然边界): $E A(L) \frac{du}{dx}|_{x=L} = P$ (右端受力)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;有限元离散 (Weak Form)&lt;/strong&gt;：
+对于线性杆单元，单元刚度矩阵 $k_e$ 为：
+&lt;/p&gt;
+$$
+k_e = \frac{EA_{avg}}{L_e} \begin{bmatrix} 1 &amp; -1 \\ -1 &amp; 1 \end{bmatrix}
+$$&lt;p&gt;
+其中 $A_{avg}$ 取单元中心处的截面面积近似。&lt;/p&gt;
+&lt;h2 id="2-代码实现架构"&gt;2. 代码实现架构&lt;/h2&gt;
+&lt;p&gt;程序整体分为五个模块：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;前处理 (Pre-processing)&lt;/strong&gt;: 离散化几何域，生成节点与单元。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;单元计算 (Element Calculation)&lt;/strong&gt;: 计算局部刚度矩阵。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;组装 (Assembly)&lt;/strong&gt;: 构建全局刚度矩阵 $K$ 和载荷向量 $F$。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;边界处理 (Boundary Conditions)&lt;/strong&gt;: 修正矩阵以引入约束。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;求解与可视化 (Solver &amp;amp; Post-processing)&lt;/strong&gt;: 解方程组并绘图。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id="21-初始化与参数定义"&gt;2.1 初始化与参数定义&lt;/h3&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;import&lt;/span&gt; numpy &lt;span style="color:#66d9ef"&gt;as&lt;/span&gt; np
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#f92672"&gt;import&lt;/span&gt; matplotlib.pyplot &lt;span style="color:#66d9ef"&gt;as&lt;/span&gt; plt
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# === 物理参数 ===&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;L_total &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;10.0&lt;/span&gt; &lt;span style="color:#75715e"&gt;# 杆件总长度 [m]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;P_load &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;1000.0&lt;/span&gt; &lt;span style="color:#75715e"&gt;# 末端拉力 [N]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;E_mod &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;2.1e11&lt;/span&gt; &lt;span style="color:#75715e"&gt;# 弹性模量 [Pa]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# === 几何参数 (变截面模拟) ===&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;def&lt;/span&gt; &lt;span style="color:#a6e22e"&gt;get_area&lt;/span&gt;(x):
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#e6db74"&gt;&amp;#34;&amp;#34;&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#e6db74"&gt; 定义横截面积 A 随坐标 x 的变化函数
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#e6db74"&gt; 此处模拟锥形杆: 根部 0.01 m^2 -&amp;gt; 末端 0.005 m^2
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#e6db74"&gt; &amp;#34;&amp;#34;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; &lt;span style="color:#66d9ef"&gt;return&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;0.01&lt;/span&gt; &lt;span style="color:#f92672"&gt;-&lt;/span&gt; (&lt;span style="color:#ae81ff"&gt;0.005&lt;/span&gt; &lt;span style="color:#f92672"&gt;*&lt;/span&gt; x &lt;span style="color:#f92672"&gt;/&lt;/span&gt; L_total)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# === 网格控制 ===&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;NUM_ELEMENTS &lt;span style="color:#f92672"&gt;=&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;10&lt;/span&gt; &lt;span style="color:#75715e"&gt;# 单元数量&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;NUM_NODES &lt;span style="color:#f92672"&gt;=&lt;/span&gt; NUM_ELEMENTS &lt;span style="color:#f92672"&gt;+&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;1&lt;/span&gt; &lt;span style="color:#75715e"&gt;# 节点数量 (1D线性单元)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id="22-网格生成-meshing"&gt;2.2 网格生成 (Meshing)&lt;/h3&gt;
+&lt;blockquote&gt;
 &lt;ul&gt;
-&lt;li&gt;双曲方程 (以波动方程为代表):$\frac{\partial^2 u}{\partial t^2}-a^2\nabla^2u=f(x,y,z,t)$&lt;/li&gt;
-&lt;li&gt;抛物型方程 (热传导方程为代表):$\frac{\partial u}{\partial t}-a^2\nabla^2u=f(x,y,z,t)$&lt;/li&gt;
-&lt;li&gt;椭圆型方程 (泊松方程为代表):$\nabla^2u=f(x,y,z,t)$&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Nodes (Coordinates)&lt;/strong&gt;: 存储物理坐标。&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Connectivity (Topology)&lt;/strong&gt;: 存储节点间的连接关系。对于 1D 线性单元，第 $i$ 个单元连接节点 $i$ 和 $i+1$。&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h3 id=&#34;12-波动微分方程的建立&#34;&gt;1.2 波动微分方程的建立&lt;/h3&gt;
-&lt;h4 id=&#34;121-基本假设&#34;&gt;1.2.1 基本假设&lt;/h4&gt;
+&lt;/blockquote&gt;
+&lt;div class="highlight"&gt;&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"&gt;&lt;code class="language-python" data-lang="python"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# 1. 生成节点坐标数组&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# linspace: 生成等间距分布的节点&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;nodes &lt;span style="color:#f92672"&gt;=&lt;/span&gt; np&lt;span style="color:#f92672"&gt;.&lt;/span&gt;linspace(&lt;span style="color:#ae81ff"&gt;0&lt;/span&gt;, L_total, NUM_NODES)
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# 2. 生成单元连接表 (Connectivity Matrix)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# elements[i] = [左节点索引, 右节点索引]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;elements &lt;span style="color:#f92672"&gt;=&lt;/span&gt; []
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#66d9ef"&gt;for&lt;/span&gt; i &lt;span style="color:#f92672"&gt;in&lt;/span&gt; range(NUM_ELEMENTS):
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt; elements&lt;span style="color:#f92672"&gt;.&lt;/span&gt;append([i, i &lt;span style="color:#f92672"&gt;+&lt;/span&gt; &lt;span style="color:#ae81ff"&gt;1&lt;/span&gt;])
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;&lt;span style="color:#75715e"&gt;# 转为 array 方便后续索引&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;elements &lt;span style="color:#f92672"&gt;=&lt;/span&gt; np&lt;span style="color:#f92672"&gt;.&lt;/span&gt;array(elements)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;code&gt;np.linspace(start, stop, num)&lt;/code&gt; 生成包含 &lt;code&gt;num&lt;/code&gt; 个点的等差数列（闭区间）。这是 FEM 生成结构化网格最常用的函数。&lt;/p&gt;</description></item><item><title>虚位移原理在有限元中的应用</title><link>https://example.org/posts/%E8%99%9A%E4%BD%8D%E7%A7%BB%E5%8E%9F%E7%90%86%E5%9C%A8%E6%9C%89%E9%99%90%E5%85%83%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://example.org/posts/%E8%99%9A%E4%BD%8D%E7%A7%BB%E5%8E%9F%E7%90%86%E5%9C%A8%E6%9C%89%E9%99%90%E5%85%83%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8/</guid><description>&lt;p&gt;tags: #有限元 #虚位移原理&lt;/p&gt;
+&lt;h1 id="1虚位移原理"&gt;1.虚位移原理&lt;/h1&gt;
+&lt;h2 id="11-什么是虚位移"&gt;1.1 什么是虚位移&lt;/h2&gt;
+&lt;p&gt;虚位移通常使用 $\delta u$来进行表示&lt;/p&gt;
+&lt;blockquote&gt;
 &lt;ul&gt;
-&lt;li&gt;弦是理想的柔软的,即只可以承受拉力不可以承受压力&lt;/li&gt;
-&lt;li&gt;弦是均匀的,即 $\rho$ 是常数&lt;/li&gt;
-&lt;li&gt;微小振动原理:$\sin\theta \approx tan \theta$&lt;/li&gt;
+&lt;li&gt;微小变动且为假想&lt;/li&gt;
+&lt;li&gt;满足几何约束条件&lt;/li&gt;
+&lt;li&gt;发生时不经过时间&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h4 id=&#34;122-方程建立过程&#34;&gt;1.2.2 方程建立过程&lt;/h4&gt;
-&lt;ul&gt;
-&lt;li&gt;选取 $(x,x+\Delta x)$ 微元,使用 $u(x,t)$ 表示在 t 时刻,x 位置的位移&lt;/li&gt;
-&lt;li&gt;对微元竖直方向进行分析:$F_u=T_2sin\beta-T_2sin\alpha$&lt;/li&gt;
-&lt;li&gt;在几何上,$tan \alpha=\frac{\partial u}{\partial x}\Big|_{x}$,$tan\beta=\frac{\partial u}{\partial x}\Big|_{x+\Delta x}$&lt;/li&gt;
-&lt;li&gt;垂直合力可以写成:$F_u=T(\frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t))$&lt;/li&gt;
-&lt;li&gt;微元质量为 $\Delta m=\rho \Delta x$&lt;/li&gt;
-&lt;li&gt;微元的垂直加速度 $a=\frac{\partial^2u}{\partial t^2}$&lt;/li&gt;
-&lt;li&gt;由 $F=ma$ 可以得到:$$T\left[\frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t) \right]=\frac{\partial^2u}{\partial t^2}(\rho \Delta x)$$&lt;/li&gt;
-&lt;li&gt;对左侧除以 $\Delta x$,当其向 0 逼近时,有 $$\lim_{ \Delta x \to 0 }\frac{T\left[ \frac{\partial u}{\partial x}(x+\Delta x,t)-\frac{\partial u}{\partial x}(x,t) \right]}{\Delta x}=\frac{\partial^2u}{\partial x^2} $$&lt;/li&gt;
-&lt;li&gt;进而,方程转变为:$$T\frac{\partial^2 u}{\partial x^2}=\rho\frac{\partial ^2 u}{\partial t^2}$$&lt;/li&gt;
-&lt;li&gt;令 $a=\frac{\rho}{T}$,整理得到一元振动微分方程:$$\frac{\partial^2u}{\partial x ^2}=a^2\frac{\partial^2u}{\partial t^2}$$&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h4 id=&#34;123-各类变体&#34;&gt;1.2.3 各类变体&lt;/h4&gt;
-&lt;p&gt;常见的对一维波动方程有影响的因素包括: 重力影响、阻尼、弹性支承、垂直悬挂等。&lt;/p&gt;</description>
-    </item>
-  </channel>
-</rss>
+&lt;/blockquote&gt;
+&lt;h2 id="21-虚位移原理的基本表述"&gt;2.1 虚位移原理的基本表述&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;如果一个变形体处于静力平衡状态，那么对于任意满足位移边界条件的微小虚位移 $\delta u$，作用在物体上的真实外力所做的==“外虚功”==，必等于物体内部真实应力所做的==“内虚功”==。&lt;/strong&gt;
+&lt;/p&gt;
+$$\delta u W_{ext}=\delta u W_{in t}$$&lt;p&gt;
+采用一个基本的线性杆虚位移变形过程&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;外力功:&lt;/strong&gt;
+&lt;/p&gt;
+$$\delta W_{ext} = \int_{0}^{L} b(x) \cdot \delta u(x) \, dx + P \cdot \delta u(L)$$
+&lt;blockquote&gt;
+&lt;p&gt;其中$b(x)$为体力关于$x$的函数,P为合外力&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;内力功:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;杆件内部的真实应力$\sigma$在虚应变$\epsilon$上做的功（本质为虚应变能）
+真实应力 $\sigma=E\epsilon=E \frac{du}{dx}$ 虚应变 $\epsilon= \frac{d(\delta u)}{dx}=$ 于是有内虚功为:
+&lt;/p&gt;
+$$\delta W_{int} = \int_{0}^{L} \left( E \frac{du}{dx} \right) \cdot \left( \frac{d(\delta u)}{dx} \right) \cdot A(x) \, dx$$</description></item></channel></rss>

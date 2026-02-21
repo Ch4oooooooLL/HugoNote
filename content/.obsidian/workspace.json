@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "posts/Ultimate_FEM_Manual.md",
+                "file": "posts/1D有限元Python程序复建与注解.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Ultimate_FEM_Manual"
+              "title": "1D有限元Python程序复建与注解"
             }
           }
         ]
@@ -177,8 +177,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -192,13 +191,13 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "c40c9ab801ce072f",
+  "active": "740952bef2d3418a",
   "lastOpenFiles": [
-    "posts/1D有限元Python程序复建与注解.md",
-    "posts/Ultimate_FEM_Manual.md",
     "posts/虚位移原理在有限元中的应用.md",
     "archive.md",
     "search.md",
+    "posts/1D有限元Python程序复建与注解.md",
+    "posts/Ultimate_FEM_Manual.md",
     "新建 文本文档.txt",
     "虚位移原理在有限元中的应用.md",
     "1D有限元Python程序复建与注解.md",
