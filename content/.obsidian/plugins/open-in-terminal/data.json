@@ -1,0 +1,10 @@
+{
+  "terminalApp": {
+    "win": "powershell.exe"
+  },
+  "enableClaude": false,
+  "enableCodex": false,
+  "enableCursor": false,
+  "enableGemini": false,
+  "enableOpencode": true
+}

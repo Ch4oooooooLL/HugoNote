@@ -2,5 +2,6 @@
   "obsidian-linter",
   "obsidian-latex-suite",
   "obsidian-paste-image-rename",
-  "obsidian-git"
+  "obsidian-git",
+  "open-in-terminal"
 ]
