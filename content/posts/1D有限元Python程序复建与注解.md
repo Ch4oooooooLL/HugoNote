@@ -5,7 +5,6 @@ date modified: 星期二, 二月 17日 2026, 6:22:06 晚上
 tags: [FEM, Python, NumericalAnalysis, Structure, Review]
 ---
 
-
 ## 1. 问题定义与物理模型
 
 **目标**：求解一根长度为 $L$、弹性模量为 $E$、横截面积 $A(x)$ 随位置变化的杆件，在右端受到拉力 $P$ 作用下的位移场 $u(x)$。

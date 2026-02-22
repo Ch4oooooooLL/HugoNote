@@ -195,8 +195,12 @@
       "terminal:Open terminal": false
     }
   },
-  "active": "c40c9ab801ce072f",
+  "active": "740952bef2d3418a",
   "lastOpenFiles": [
+    "posts/1D有限元Python程序复建与注解.md",
+    "posts/虚位移原理在有限元中的应用.md",
+    "posts/2D桁架PythonFEM程序.md",
+    "posts/pyfem-dynamics-record/index.md",
     "posts/pyfem-dynamics-record/images/supervisor/static_deformation.png",
     "posts/pyfem-dynamics-record/images/supervisor/run_stability.png",
     "posts/pyfem-dynamics-record/images/supervisor/pinn_history.png",
@@ -205,12 +209,8 @@
     "posts/pyfem-dynamics-record/images/supervisor/vm_cloud_frame_100.png",
     "posts/PyFEM-Dynamics 工作记录.md",
     "posts/pyfem-dynamics-record/images/supervisor",
-    "posts/pyfem-dynamics-record/index.md",
     "posts/pyfem-dynamics-record/images",
     "posts/pyfem-dynamics-record",
-    "posts/2D桁架PythonFEM程序.md",
-    "posts/虚位移原理在有限元中的应用.md",
-    "posts/1D有限元Python程序复建与注解.md",
     "archive.md",
     "search.md",
     "posts/Ultimate_FEM_Manual.md",
