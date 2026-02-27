@@ -4,16 +4,16 @@
     "type": "split",
     "children": [
       {
-        "id": "527fa86f2c2065eb",
+        "id": "e4e9442a2e1919ed",
         "type": "tabs",
         "children": [
           {
-            "id": "740952bef2d3418a",
+            "id": "8fc4770f2ef49977",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "posts/pyfem-dynamics-record/index.md",
+                "file": "posts/1D有限元Python程序复建与注解/index.md",
                 "mode": "source",
                 "source": false
               },
@@ -179,8 +179,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 388.5
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -195,35 +194,48 @@
       "terminal:Open terminal": false
     }
   },
-  "active": "740952bef2d3418a",
+  "active": "8fc4770f2ef49977",
   "lastOpenFiles": [
+    "posts/1D有限元Python程序复建与注解/index.md",
+    "posts/1d-fem-python-rebuild/index.md",
+    "posts/PyFEM-Dynamics 工作记录/images/supervisor/vm_cloud_frame_100.png",
+    "posts/PyFEM-Dynamics 工作记录/images/supervisor/static_deformation.png",
+    "posts/PyFEM-Dynamics 工作记录/images/supervisor/run_stability.png",
+    "posts/PyFEM-Dynamics 工作记录/images/supervisor/pinn_history.png",
+    "posts/PyFEM-Dynamics 工作记录/images/supervisor/model_comparison.png",
+    "posts/PyFEM-Dynamics 工作记录/images/supervisor/lstm_history.png",
+    "posts/PyFEM-Dynamics 工作记录/images/supervisor",
+    "posts/PyFEM-Dynamics 工作记录/index.md",
+    "posts/PyFEM-Dynamics 工作记录/images",
+    "posts/PyFEM-Dynamics 工作记录",
+    "posts/虚位移原理在有限元中的应用/index.md",
+    "posts/虚位移原理在有限元中的应用/images",
+    "posts/虚位移原理在有限元中的应用",
+    "posts/2D桁架PythonFEM程序/index.md",
+    "posts/2D桁架PythonFEM程序/images",
+    "posts/2D桁架PythonFEM程序",
+    "posts/1D有限元Python程序复建与注解/images",
+    "posts/1D有限元Python程序复建与注解",
+    "posts/2d-truss-python-fem/index.md",
+    "posts/pyfem-dynamics-record/index.md",
+    "posts/virtual-displacement-principle/index.md",
+    "posts/virtual-displacement-principle/images",
     "posts/1D有限元Python程序复建与注解.md",
     "posts/虚位移原理在有限元中的应用.md",
     "posts/2D桁架PythonFEM程序.md",
-    "posts/pyfem-dynamics-record/index.md",
     "posts/pyfem-dynamics-record/images/supervisor/static_deformation.png",
     "posts/pyfem-dynamics-record/images/supervisor/run_stability.png",
     "posts/pyfem-dynamics-record/images/supervisor/pinn_history.png",
     "posts/pyfem-dynamics-record/images/supervisor/model_comparison.png",
-    "posts/pyfem-dynamics-record/images/supervisor/lstm_history.png",
-    "posts/pyfem-dynamics-record/images/supervisor/vm_cloud_frame_100.png",
     "posts/PyFEM-Dynamics 工作记录.md",
-    "posts/pyfem-dynamics-record/images/supervisor",
-    "posts/pyfem-dynamics-record/images",
-    "posts/pyfem-dynamics-record",
     "archive.md",
     "search.md",
     "posts/Ultimate_FEM_Manual.md",
-    "新建 文本文档.txt",
     "虚位移原理在有限元中的应用.md",
     "1D有限元Python程序复建与注解.md",
     "posts/Test1/材力基本公式.md",
-    "posts/Test2",
-    "posts/Test1",
     "posts/Test2/Test.md",
     "posts/first-post.md",
-    "Test.md",
-    "posts",
-    "新建文件夹"
+    "Test.md"
   ]
 }
