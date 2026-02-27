@@ -3,5 +3,6 @@
   "autoPairMarkdown": true,
   "useTab": true,
   "autoPairBrackets": true,
-  "spellcheck": false
+  "spellcheck": false,
+  "alwaysUpdateLinks": true
 }
